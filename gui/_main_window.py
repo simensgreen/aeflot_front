@@ -11,8 +11,9 @@ class AeflotFrontMainWindow(QMainWindow):
         self.app_data = app_data
         self.app_data.logger.status_bar = self.statusBar()
 
-        self.setWindowTitle("AeflotFront")
-        self.setGeometry(200, 200, 1000, 700)
+        config = self.app_data.config['window']
+        self.setWindowTitle(config['title'])
+        self.setGeometry(config.getint('x'), config.getint('y'), config.getint('width'), config.getint('height'))
 
         self.setCentralWidget(AeflotFrontDockArea(self.app_data))
         self.setMenuBar(AeflotFrontMenuBar(self.app_data))

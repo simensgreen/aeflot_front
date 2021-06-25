@@ -9,3 +9,11 @@ DEFAULT_CONFIG['logging'] = {
     'filemode': 'w',
     "format": logging.BASIC_FORMAT,
 }
+
+DEFAULT_CONFIG['window'] = {
+    'x': '200',
+    'y': '200',
+    'width': '1600',
+    'height': '700',
+    'title': 'AeflotFront'
+}
