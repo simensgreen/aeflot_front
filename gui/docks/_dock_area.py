@@ -43,6 +43,32 @@ class AddDockCommand(Command):
             self.area.add_planes_list()
 
 
+class RemoveDockCommand(Command):
+    def __init__(self, area: "AeflotFrontDockArea", dock_type: Docks):
+        self.dock_type = dock_type
+        self.area = area
+
+    def undo(self):
+        if self.dock_type == Docks.Axonometric:
+            self.area.add_axonometric()
+        elif self.dock_type == Docks.PlaneSettings:
+            self.area.add_plane_settings()
+        elif self.dock_type == Docks.ProjectionXZ:
+            self.area.add_projection("XZ")
+        elif self.dock_type == Docks.PlanesDock:
+            self.area.add_planes_list()
+
+    def do(self):
+        if self.dock_type == Docks.Axonometric:
+            self.area.remove_axonometric()
+        elif self.dock_type == Docks.PlaneSettings:
+            self.area.remove_plane_settings()
+        elif self.dock_type == Docks.ProjectionXZ:
+            self.area.remove_projection('XZ')
+        elif self.dock_type == Docks.PlanesDock:
+            self.area.remove_planes()
+
+
 class AeflotFrontDockArea(DockArea):
     def __init__(self, app_data: AppData):
         super().__init__()
@@ -53,6 +79,8 @@ class AeflotFrontDockArea(DockArea):
 
         self.app_data = app_data
         self.history = app_data.history
+
+        # Создание доков:
         self.history.add(AddDockCommand(self, Docks.Axonometric))
         self.history.add(AddDockCommand(self, Docks.PlaneSettings))
         self.history.add(AddDockCommand(self, Docks.ProjectionXZ))

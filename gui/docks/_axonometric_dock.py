@@ -1,4 +1,3 @@
-import OpenGL.GL as OGL
 from pyqtgraph.dockarea import Dock
 from pyqtgraph.opengl import GLViewWidget
 from pyqtgraph.opengl import GLMeshItem, MeshData
@@ -12,7 +11,6 @@ class AxonometricDock(Dock):
         self.app_data = app_data
         self.handler_id = app_data.handlers.add(self.update_model, AppEvent.ModelChanged)
         self.widget = GLViewWidget()
-        OGL.glEnable(OGL.GL_LINE_SMOOTH)
         self.addWidget(self.widget)
         self.model_item = None
 

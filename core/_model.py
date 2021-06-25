@@ -56,6 +56,10 @@ class Model:
 
     def add_plane(self, x):
         self.planes[x] = Plane(np.array(()), x)
+        x = np.linspace(-1, 1, 10)
+        y = np.linspace(-1, 1, 10)
+        X, Y = np.meshgrid(x, y)
+        Z = 0.12861723162963065 * X + 0.0014024845304814665 * Y + 1.0964608113924048
 
     def remove_plane(self, x):
         if x in self.planes:

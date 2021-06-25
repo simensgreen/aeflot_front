@@ -1,5 +1,6 @@
 import sys
 import os
+import OpenGL.GL as OGL
 from configparser import ConfigParser, ExtendedInterpolation
 
 from PyQt5.QtWidgets import QApplication
@@ -31,6 +32,7 @@ class AeflotFrontApp:
     def exit(logger=None):
         if logger:
             logger.info("Закрытие приложения")
+            OGL.glEnable(OGL.GL_LINE_SMOOTH)
         sys.exit(0)
 
 

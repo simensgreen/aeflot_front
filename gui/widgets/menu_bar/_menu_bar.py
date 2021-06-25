@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog, QWidget, QDialog, QVBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog,\
+    QWidget, QDialog, QVBoxLayout, QLineEdit, QLabel, QHBoxLayout
 
 from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand
 from utils import AppData, Command, AppEvent
@@ -59,7 +60,17 @@ class AeflotFrontMenuBar(QMenuBar):
         save_config_action.triggered.connect(self.save_config)
 
     def add_docks_menu(self, menu):
-        pass
+        axonometric = menu.addAction("Аксонометрия")
+        axonometric.setCheckable(True)
+
+        planes = menu.addAction("Плоскости")
+        planes.setCheckable(True)
+
+        planes_sets = menu.addAction("Настройки плоскости")
+        planes_sets.setCheckable(True)
+
+        projection_xz = menu.addAction("Проекция на плоскость XZ")
+        projection_xz.setCheckable(True)
 
     def add_app_menu(self, menu):
         self.add_settings_menu(menu.addMenu("Настройки"))
@@ -113,9 +124,30 @@ class AeflotFrontMenuBar(QMenuBar):
             self.history.add(ScaleModelCommand((factor, factor, factor), self.app_data))
 
     def rotate_x(self):
+        line_edit_deg = QLineEdit()
+        line_edit_deg.textEdited.connect(lambda val: val)
+
+        line_edit_radian = QLineEdit()
+
         dialog = QDialog(self)
         dialog.setWindowTitle("Вращение вокруг OX")
-        main_layout = QVBoxLayout()
-        dialog.setLayout(main_layout)
-        main_layout.addWidget(QLineEdit())
+
+        vertical_layout = QVBoxLayout()
+        horizontal_layout = QHBoxLayout()
+
+        vertical_layout.addWidget(QLabel("Введите угол:"))
+
+        vertical_layout.addLayout(horizontal_layout)
+
+        horizontal_layout.addWidget(QLabel("В градусах"))
+        horizontal_layout.addWidget(line_edit_deg)
+
+        horizontal_layout = QHBoxLayout()
+        vertical_layout.addLayout(horizontal_layout)
+
+        horizontal_layout.addWidget(QLabel("В радианах"))
+        horizontal_layout.addWidget(line_edit_radian)
+
+        dialog.setLayout(vertical_layout)
+
         dialog.exec()
