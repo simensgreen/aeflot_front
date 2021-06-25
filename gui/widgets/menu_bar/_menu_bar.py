@@ -72,7 +72,7 @@ class AeflotFrontMenuBar(QMenuBar):
 
     def add_settings_menu(self, menu):
         logging_menu = menu.addMenu("Журналирование")
-        logging_menu.setDisabled(True)
+        # logging_menu.setDisabled(True)
         logging_file_action = logging_menu.addAction("Имя файла")
         logging_file_action.triggered.connect(self.set_logging_filename)
         logging_level = logging_menu.addMenu("Уровень")

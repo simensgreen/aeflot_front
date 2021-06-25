@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLineEdi
 from pyqtgraph.dockarea import Dock
 
 from core.model_commands import AddPlaneCommand
-from utils import AppData
+from utils import AppData, AppEvent
 
 
 class PlaneSettingsDock(Dock):
@@ -74,6 +74,8 @@ class PlaneSettingsDock(Dock):
             self.log.warn(f"Значение должно быть: 0 <= значение <= 1, а не {new}")
             new = min(max(0.0, new), 1.0)
         self.__value = new
+        self.app_data.model.current_plane_value = self.value
+        self.app_data.handlers.call(AppEvent.ModelChanged)
         self.log.dbg(f"Значение для плоскости изменено на {new}")
 
     def remove(self):

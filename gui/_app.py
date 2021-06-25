@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from core import Model
 from gui import AeflotFrontMainWindow
 from utils import DEFAULT_CONFIG, AppData, History, Logger, Handlers, AppEvent
+import OpenGL.GL as OGL
 
 
 class AeflotFrontApp:
@@ -25,6 +26,7 @@ class AeflotFrontApp:
         window = AeflotFrontMainWindow(app_data)
         window.show()
         app_data.logger.info('Приложение запущено')
+        OGL.glEnable(OGL.GL_LINE_SMOOTH)
         sys.exit(app.exec_())
 
     @staticmethod
