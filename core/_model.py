@@ -84,3 +84,20 @@ class Model:
     @staticmethod
     def rotation_z(radians):
         return np.array(((np.cos(radians), -np.sin(radians), 0), (np.sin(radians), np.cos(radians), 0), (0, 0, 1)))
+
+    @property
+    def aabb(self):
+        if len(self.vertices) != 0:
+            min_x = max_x = self.vertices[0][0]
+            min_y = max_y = self.vertices[0][1]
+            min_z = max_z = self.vertices[0][2]
+            for vertex in self.vertices:
+                min_x = min(min_x, vertex[0])
+                min_y = min(min_y, vertex[1])
+                min_z = min(min_z, vertex[2])
+                max_z = max(max_z, vertex[2])
+                max_y = max(max_y, vertex[1])
+                max_x = max(max_x, vertex[0])
+            return min_x, min_y, min_z, max_x, max_y, max_z
+        else:
+            return 0, 0, 0, 1, 1, 1

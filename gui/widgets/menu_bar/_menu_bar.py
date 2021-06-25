@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog, QWidget, QDialog, QVBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog, QDialog, QVBoxLayout, QLineEdit
 
 from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand
 from utils import AppData, Command, AppEvent
@@ -38,6 +38,7 @@ class AeflotFrontMenuBar(QMenuBar):
         open_model.triggered.connect(self.load_model)
         menu.addSeparator()
         normalize_model = menu.addAction("Нормализовать")
+        normalize_model.setShortcut("Ctrl+N")
         normalize_model.triggered.connect(self.normalize_model)
         scale_model = menu.addAction("Масштабировать")
         scale_model.triggered.connect(self.scale_model)
