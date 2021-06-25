@@ -1,6 +1,6 @@
 from pyqtgraph.dockarea import Dock
 from pyqtgraph.opengl import GLViewWidget
-from pyqtgraph.opengl import GLMeshItem, MeshData, GLSurfacePlotItem
+from pyqtgraph.opengl import GLMeshItem, MeshData, GLSurfacePlotItem, GLAxisItem
 import numpy as np
 
 from utils import AppData, AppEvent
@@ -28,8 +28,13 @@ class AxonometricDock(Dock):
             ((max_x, max_y, z), (min_x, min_y, z), (max_x, min_y, z))
         ))
         self.widget.addItem(GLMeshItem(meshdata=MeshData(vertexes=surface_vertexes,
-                                                         vertexColors=np.array([(0, .7, .7, .5)] * 6)),
+                                                         vertexColors=np.array([(.40, .40, .80, .5)] * 6)),
                                        glOptions='translucent'))
+
+    def add_axis(self):
+        axis = GLAxisItem(glOptions='opaque')
+        axis.setSize(x=.7, y=.5, z=1)
+        self.widget.addItem(axis)
 
     def clear(self):
         self.widget.clear()
@@ -38,6 +43,7 @@ class AxonometricDock(Dock):
         self.clear()
         self.add_model()
         self.add_plane()
+        self.add_axis()
 
     def remove(self):
         self.app_data.handlers.remove(self.handler_id)
