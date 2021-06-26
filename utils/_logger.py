@@ -13,22 +13,22 @@ class Logger:
         self.dbg(f'Инициализация системы логирования завершена успешно с уровнем {self.level}')
 
     def dbg(self, message: str, exc_info=False, msecs=2000):
-        if self.status_bar and 0 >= self.level:
+        if self.status_bar and 0 <= self.level:
             self.status_bar.showMessage(f"DEBUG: {message}", msecs=msecs)
         self.__logger.debug(message, exc_info=exc_info)
 
     def info(self, message: str, exc_info=False, msecs=5000):
-        if self.status_bar and 1 >= self.level:
+        if self.status_bar and 1 <= self.level:
             self.status_bar.showMessage(f"Информация: {message}", msecs=msecs)
         self.__logger.info(message, exc_info=exc_info)
 
     def warn(self, message: str, exc_info=False, msecs=0):
-        if self.status_bar and 2 >= self.level:
+        if self.status_bar and 2 <= self.level:
             self.status_bar.showMessage(f"Предупреждение: {message}", msecs=msecs)
         self.__logger.warning(message, exc_info=exc_info)
 
     def err(self, message: str, exc_info=False, msecs=0):
-        if self.status_bar and 3 >= self.level:
+        if self.status_bar and 3 <= self.level:
             self.status_bar.showMessage(f"Ошибка: {message}", msecs=msecs)
         self.__logger.error(message, exc_info=exc_info)
 
