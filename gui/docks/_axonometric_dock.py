@@ -13,7 +13,7 @@ class AxonometricDock(Dock):
         self.app_data = app_data
         config = self.app_data.config['axonometric']
         self.handler_id = app_data.handlers.add(self.full_update, AppEvent.ModelChanged)
-        self.widget = GLViewWidget(rotationMethod='quaternion')
+        self.widget = GLViewWidget(rotationMethod=config['rotation method'])
         self.widget.setCameraPosition(
             pos=QVector3D(*map(float, config['startup camera position'].split())),
             distance=config.getfloat('startup camera distance'))

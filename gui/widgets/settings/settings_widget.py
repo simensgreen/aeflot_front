@@ -9,6 +9,7 @@ import copy
 
 
 SHADERS = ['', 'balloon', 'normalColor', 'viewNormalColor', 'shaded', 'edgeHilight', 'heightColor']
+ROTATION_METHODS = ['quaternion', 'euler']
 
 
 class AeflotFrontSettingsWidget(QWidget):
@@ -210,6 +211,15 @@ class AxonometricSettings(SettingsWidget):
         shader_combobox.currentIndexChanged.connect(self.change_shader)
         shader_layout.addWidget(shader_combobox)
 
+        rot_method_layout = QHBoxLayout()
+        self.main_layout.addLayout(rot_method_layout)
+        rot_method_layout.addWidget(QLabel(text='Метод вращения'))
+        rot_method_combobox = QComboBox()
+        rot_method_combobox.addItems(ROTATION_METHODS)
+        rot_method_combobox.setCurrentText(config['rotation method'])
+        rot_method_combobox.currentIndexChanged.connect(self.change_rot_method)
+        rot_method_layout.addWidget(rot_method_combobox)
+
         axes = QCheckBox(text='Показывать оси')
         self.main_layout.addWidget(axes)
         axes.setChecked(config.getboolean('axes'))
@@ -242,6 +252,9 @@ class AxonometricSettings(SettingsWidget):
                                     self.app_data.config['axonometric'].__setitem__("automatic center", str(val)))
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+    def change_rot_method(self, value):
+        self.app_data.config['axonometric']['rotation method'] = ROTATION_METHODS[value]
 
     def change_points_radius(self, value):
         self.app_data.config['axonometric']['points radius'] = value if value and value != '.' else "0"
