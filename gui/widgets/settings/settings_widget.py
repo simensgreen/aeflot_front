@@ -318,6 +318,7 @@ class ProjectionsSettings(SettingsWidget):
         fill_check = QCheckBox(text="Заливка")
         self.main_layout.addWidget(fill_check)
         fill_check.setChecked(bool(config['fill color']))
+        fill_check.clicked.connect(self.check_fill)
 
         stroke_check = QCheckBox(text="Кант")
         self.main_layout.addWidget(stroke_check)
@@ -382,7 +383,7 @@ class ProjectionsSettings(SettingsWidget):
 
     def check_fill(self, value):
         if value:
-            self.app_data.config['projections']['fill color'] = self.fill_color_btn.color().HexRgb
+            self.app_data.config['projections']['fill color'] = self.extract_color(self.fill_color_btn)
         else:
             self.app_data.config['projections']['fill color'] = ''
         self.app_data.handlers.call(AppEvent.ModelChanged)
