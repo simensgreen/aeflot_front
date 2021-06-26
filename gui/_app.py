@@ -16,12 +16,16 @@ class AeflotFrontApp:
     @staticmethod
     def run():
         app = QApplication(sys.argv)
+        config = copy.deepcopy(DEFAULT_CONFIG)
+        user_config = False
         if os.path.exists('config.ini'):
-            config = ConfigParser(interpolation=ExtendedInterpolation())
-            config.read('config.ini')
-        else:
-            config = copy.deepcopy(DEFAULT_CONFIG)
+            user_config = ConfigParser(interpolation=ExtendedInterpolation())
+            user_config.read('config.ini')
+            config.update(user_config)
+            user_config = True
         logger = Logger(config['logging'])
+        if user_config:
+            logger.info("Настройки загружены из config.ini")
         handlers = Handlers()
         handlers.add(lambda: AeflotFrontApp.exit(logger), AppEvent.ExitApp, priority=-255)
         model = Model()

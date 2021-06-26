@@ -44,7 +44,7 @@ class AeflotFrontSettingsWidget(QWidget):
         save_btn = QPushButton(text='Сохранить')
         buttons_layout.addWidget(save_btn)
         save_btn.setFixedWidth(120)
-        save_btn.clicked.connect(lambda: None)
+        save_btn.clicked.connect(self.save_config)
 
         # cancel_btn = QPushButton(text='Отменить')
         # buttons_layout.addWidget(cancel_btn)
@@ -55,6 +55,11 @@ class AeflotFrontSettingsWidget(QWidget):
         self.tabs.addTab(AxonometricSettings(self.app_data), "Аксонометрия")
         self.tabs.addTab(ProjectionsSettings(self.app_data), "Проекции")
         super().show()
+
+    def save_config(self):
+        with open('config.ini', 'w') as file:
+            self.app_data.config.write(file)
+        self.app_data.logger.info("Настройки сохранены в config.ini")
 
     def restore(self):
         self.app_data.config = copy.deepcopy(DEFAULT_CONFIG)
