@@ -16,13 +16,13 @@ class ProjectionDock(Dock):
         self.addWidget(self.widget)
 
         self.plot: PlotItem = self.widget.getPlotItem()
-        self.projection = ProjectionItem(self.app_data.model.current_plane_projection, app_data)
+        self.projection = ProjectionItem(self.app_data.model.convex_hull_plane_projection, app_data)
         self.plot.addItem(self.projection)
 
         self.app_data.handlers.add(self.update, AppEvent.ModelChanged)
 
     def update(self):
-        self.projection.data = self.app_data.model.current_plane_projection
+        self.projection.data = self.app_data.model.convex_hull_plane_projection
         self.plot.replot()
 
     def remove(self):

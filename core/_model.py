@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import open3d
 
 from core.find_coords_point import find_intersections_section
+from scipy.spatial import ConvexHull
 
 
 @dataclass(frozen=True)
@@ -102,6 +103,11 @@ class Model:
     @property
     def current_plane_points(self):
         return find_intersections_section(self.sections, self.current_plane_value)
+
+    @property
+    def convex_hull_plane_projection(self):
+        hull = ConvexHull(self.current_plane_projection)
+        return [hull.points[i] for i in hull.vertices]
 
     @property
     def aabb(self):
