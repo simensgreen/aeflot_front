@@ -7,7 +7,7 @@ import OpenGL.GL as OGL
 from PyQt5.QtWidgets import QApplication
 
 from core import Model
-from core.model_commands import NormalizeModelCommand
+from core.model_commands import NormalizeModelCommand, LoadModelCommand
 from gui import AeflotFrontMainWindow
 from utils import DEFAULT_CONFIG, AppData, History, Logger, Handlers, AppEvent
 
@@ -27,7 +27,7 @@ class AeflotFrontApp:
         model = Model()
         app_data = AppData(model, config, History(logger, handlers), logger, handlers)
         if config['model']['startup model']:
-            model.load_model(config['model']['startup model'])
+            app_data.history.add(LoadModelCommand(config['model']['startup model'], app_data))
         if config['model'].getboolean("normalize on load"):
             app_data.history.add(NormalizeModelCommand(app_data))
         window = AeflotFrontMainWindow(app_data)

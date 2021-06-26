@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 
 from utils import Command, AppData, AppEvent
@@ -24,6 +26,8 @@ class LoadModelCommand(Command):
         self.old_filename = None
 
     def do(self):
+        if not os.path.exists(self.filename):
+            self.app_data.logger.err(f"Файл \"{self.filename}\" не найден, модель не загружена")
         if self.app_data.model.filename:
             self.old_filename = self.app_data.model.filename
         self.app_data.model.load_model(self.filename)

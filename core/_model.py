@@ -34,16 +34,18 @@ class Model:
             vertex[2] *= factor_z
 
     def absolute(self):
-        min_x = min(vertex[0] for vertex in self.vertices)
-        min_y = min(vertex[1] for vertex in self.vertices)
-        min_z = min(vertex[2] for vertex in self.vertices)
-        self.move(-min_x, -min_y, -min_z)
+        if len(self.vertices) != 0:
+            min_x = min(vertex[0] for vertex in self.vertices)
+            min_y = min(vertex[1] for vertex in self.vertices)
+            min_z = min(vertex[2] for vertex in self.vertices)
+            self.move(-min_x, -min_y, -min_z)
 
     def normalize(self):
-        self.absolute()
-        factor = 1 / max(abs(value) for vertex in self.vertices for value in vertex)
-        self.scale(factor, factor, factor)
-        return factor
+        if len(self.vertices) != 0:
+            self.absolute()
+            factor = 1 / max(abs(value) for vertex in self.vertices for value in vertex)
+            self.scale(factor, factor, factor)
+            return factor
 
     def move(self, dx, dy, dz):
         vector = np.array((dx, dy, dz))
