@@ -317,10 +317,12 @@ class ProjectionsSettings(SettingsWidget):
         self.stroke_width_entry = self.add_label_entry("Ширина канта")
         self.stroke_width_entry.setText(config['stroke width'])
         self.stroke_width_entry.setValidator(self.float_validator)
+        self.stroke_width_entry.textEdited.connect(self.change_stroke_width)
 
         self.point_size_entry = self.add_label_entry("Размер точек")
         self.point_size_entry.setText(config['points size'])
         self.point_size_entry.setValidator(self.float_validator)
+        self.point_size_entry.textEdited.connect(self.change_points_width)
 
         self.fill_color_btn = self.add_label_color_btn("Цвет заливки", config['fill color'])
         self.fill_color_btn.sigColorChanged.connect(self.fill_color)
@@ -334,6 +336,16 @@ class ProjectionsSettings(SettingsWidget):
         self.point_color_btn.sigColorChanged.connect(self.points_color)
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+    def change_points_width(self, value):
+        value = float(value) if value and value != '-' or value != '.' else 0
+        self.app_data.config['projections']['points size'] = str(value)
+        self.app_data.handlers.call(AppEvent.ModelChanged)
+
+    def change_stroke_width(self, value):
+        value = float(value) if value and value != '-' or value != '.' else 0
+        self.app_data.config['projections']['stroke width'] = str(value)
+        self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def check_points(self, value):
         self.point_size_entry.setEnabled(value)
