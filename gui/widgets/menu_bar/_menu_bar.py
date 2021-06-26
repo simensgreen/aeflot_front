@@ -3,7 +3,7 @@ from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog
 
 from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand, RotateModelZCommand, \
-    RotateModelXCommand, RotateModelYCommand
+    RotateModelXCommand, RotateModelYCommand, MoveModelCommand
 from gui.widgets.menu_bar.multiline_dialog import MultilineDialog
 from utils import AppData, Command, AppEvent
 
@@ -48,7 +48,8 @@ class AeflotFrontMenuBar(QMenuBar):
         normalize_model.triggered.connect(self.normalize_model)
         scale_model = menu.addAction("Масштабировать")
         scale_model.triggered.connect(self.scale_model)
-        move_model = menu.addAction("Передвинуть")
+        move_model = menu.addAction("Переместить")
+        move_model.triggered.connect(self.move_model)
         rotate_menu = menu.addMenu("Вращать")
         rotate_x = rotate_menu.addAction("Вокруг OX")
         rotate_x.triggered.connect(self.rotate_x)
@@ -156,3 +157,17 @@ class AeflotFrontMenuBar(QMenuBar):
         result = self.__rotation_dialog("OZ")
         if result[0] and not result[1]:
             self.history.add(RotateModelZCommand(result[0], self.app_data))
+
+    def move_model(self):
+        validator = QRegExpValidator(QRegExp(r"\-?\d*\.?\d*"))
+        dialog = MultilineDialog('Перемещение',
+                                 {'name': 'dx', 'default': '0.0', 'validator': validator},
+                                 {'name': 'dy', 'default': '0.0', 'validator': validator},
+                                 {'name': 'dz', 'default': '0.0', 'validator': validator},
+                                 ok='Переместить'
+                                 )
+        dialog.exec()
+        dx, dy, dz = dialog.entries['dx'].text(), dialog.entries['dy'].text(), dialog.entries['dz'].text()
+        vector = float(dx) if dx else 0, float(dy) if dy else 0, float(dz) if dz else 0
+        if not dialog.cancelled and any(vector):
+            self.history.add(MoveModelCommand(np.array(vector), self.app_data))
