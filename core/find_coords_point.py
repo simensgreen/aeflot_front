@@ -18,18 +18,27 @@ def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: 
     Examples:
         >>> find_intersection_point((10.0, -2.0, 3.0), (100.0, 2.0, 9.0), .5)
     """
-    number = 2
-    if start_point[number] == plane_height == end_point[number]:
+    x = 0
+    y = 1
+    z = 2
+    if start_point[z] == plane_height == end_point[z]:
         return None
 
-    elif start_point[number] == end_point[number] and start_point[number] != plane_height:
+    elif start_point[z] == end_point[z] and start_point[z] != plane_height:
         return None
 
-    elif start_point[number] <= plane_height <= end_point[number] or start_point[number] >= plane_height >= end_point[number]:
+    elif start_point[z] <= plane_height <= end_point[z] or \
+            start_point[z] >= plane_height >= end_point[z]:
         try:
-            sought_x = start_point[0] + (end_point[0] / end_point[2]) * (plane_height - start_point[2])
-            sought_y = start_point[1] + (end_point[1] / end_point[2]) * (plane_height - start_point[2])
+
             sought_z = plane_height
+
+            sought_x = ((end_point[x] - start_point[x]) / (end_point[z] - start_point[z])) \
+                       * (sought_z - start_point[z]) + start_point[x]
+
+            sought_y = ((end_point[y] - start_point[y]) / (end_point[z] - start_point[z])) \
+                       * (sought_z - start_point[z]) + start_point[y]
+
             return sought_x, sought_y, sought_z
         except ZeroDivisionError:
             return None
