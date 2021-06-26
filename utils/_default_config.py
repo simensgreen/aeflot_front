@@ -31,10 +31,14 @@ DEFAULT_CONFIG['axonometric'] = {
     'startup camera azimuth': '20',
     'startup camera elevation': '10',
     'startup camera position': '0 0 0',
+    'plane': 'true',
+    'model': 'true',
     'axes': 'true',
     'edges': 'true',
     'shader': '',
-    'plane color': "0.4, 0.4, 0.8, 0.5"
+    'automatic center': 'true',
+    'rotation method': 'quaternion',
+    'plane color': "0.4 0.4 0.8 0.5",
 }
 
 DEFAULT_CONFIG['model'] = {

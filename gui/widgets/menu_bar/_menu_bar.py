@@ -6,6 +6,7 @@ from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleMo
     RotateModelXCommand, RotateModelYCommand, MoveModelCommand
 from gui.widgets.menu_bar.docks_menu import DocksMenu
 from gui.widgets.menu_bar.multiline_dialog import MultilineDialog
+from gui.widgets.settings import AeflotFrontSettingsWidget
 from utils import AppData, Command, AppEvent
 
 import numpy as np
@@ -35,7 +36,6 @@ class AeflotFrontMenuBar(QMenuBar):
         self.add_model_menu(self.addMenu("Модель"))
         self.docks_menu = DocksMenu(self.app_data, dock_area)
         self.addMenu(self.docks_menu)
-        # self.add_docks_menu(self.addMenu("Доки"))
         self.add_app_menu(self.addMenu("Приложение"))
         help_action = self.addAction('Справка')
         help_action.setShortcut("F1")
@@ -74,7 +74,13 @@ class AeflotFrontMenuBar(QMenuBar):
         save_config_action.triggered.connect(self.save_config)
 
     def add_app_menu(self, menu):
-        self.add_settings_menu(menu.addMenu("Настройки"))
+        def show():
+            self.settings = AeflotFrontSettingsWidget(self.app_data)
+            self.settings.show()
+
+        settings = menu.addAction("Настройки")
+        settings.triggered.connect(show)
+        # self.add_settings_menu(menu.addMenu("Настройки"))
         about_action = menu.addAction('Информация')
         about_action.setDisabled(True)
         menu.addSeparator()

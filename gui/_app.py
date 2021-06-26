@@ -1,14 +1,15 @@
-import sys
+import copy
 import os
+import sys
 from configparser import ConfigParser, ExtendedInterpolation
 
+import OpenGL.GL as OGL
 from PyQt5.QtWidgets import QApplication
 
 from core import Model
 from core.model_commands import NormalizeModelCommand
 from gui import AeflotFrontMainWindow
 from utils import DEFAULT_CONFIG, AppData, History, Logger, Handlers, AppEvent
-import OpenGL.GL as OGL
 
 
 class AeflotFrontApp:
@@ -19,7 +20,7 @@ class AeflotFrontApp:
             config = ConfigParser(interpolation=ExtendedInterpolation())
             config.read('config.ini')
         else:
-            config = DEFAULT_CONFIG
+            config = copy.deepcopy(DEFAULT_CONFIG)
         logger = Logger(config['logging'])
         handlers = Handlers()
         handlers.add(lambda: AeflotFrontApp.exit(logger), AppEvent.ExitApp, priority=-255)
