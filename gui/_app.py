@@ -21,7 +21,9 @@ class AeflotFrontApp:
         if os.path.exists('config.ini'):
             user_config = ConfigParser(interpolation=ExtendedInterpolation())
             user_config.read('config.ini')
-            config.update(user_config)
+            for section in config.sections():
+                if section in user_config:
+                    config[section].update(user_config[section])
             user_config = True
         logger = Logger(config['logging'])
         if user_config:

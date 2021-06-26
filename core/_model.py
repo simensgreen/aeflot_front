@@ -86,7 +86,10 @@ class Model:
 
     @property
     def current_plane_projection(self):
-        return [(point[0], point[1]) for point in self.current_plane_points]
+        if self.model_loaded:
+            return [(point[0], point[1]) for point in self.current_plane_points]
+        else:
+            return []
 
     @staticmethod
     def rotation_x(radians):
@@ -102,16 +105,26 @@ class Model:
 
     @property
     def current_plane_points(self):
-        return find_intersections_section(self.sections, self.current_plane_value)
+        if self.model_loaded:
+            return find_intersections_section(self.sections, self.current_plane_value)
+        else:
+            return []
 
     @property
     def convex_hull_plane_projection(self):
-        hull = ConvexHull(self.current_plane_projection)
-        return [hull.points[i] for i in hull.vertices]
+        if self.model_loaded:
+            hull = ConvexHull(self.current_plane_projection)
+            return [hull.points[i] for i in hull.vertices]
+        else:
+            return []
+
+    @property
+    def model_loaded(self):
+        return len(self.vertices) != 0
 
     @property
     def aabb(self):
-        if len(self.vertices) != 0:
+        if self.model_loaded:
             min_x = max_x = self.vertices[0][0]
             min_y = max_y = self.vertices[0][1]
             min_z = max_z = self.vertices[0][2]

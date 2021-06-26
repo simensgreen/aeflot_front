@@ -8,14 +8,14 @@ from utils import AppData, AppEvent
 
 
 class PlaneSettingsDock(Dock):
-    TOLERANCE = 8
-    MAX_SCALE = 10 ** TOLERANCE
     __value = 0
 
     def __init__(self, app_data: AppData):
         super().__init__("Настройки плоскости")
         self.app_data = app_data
         self.log = app_data.logger
+        self.tolerance = app_data.config['model'].getint('plane tolerance order')
+        self.max_scale = 10 ** self.tolerance
 
         self.widget = QWidget()
         self.addWidget(self.widget)
@@ -32,10 +32,10 @@ class PlaneSettingsDock(Dock):
         self.add_plane_btn.clicked.connect(self.add_plane)
         slider_entry.addWidget(self.add_plane_btn)
 
-        self.slider.setRange(0, self.MAX_SCALE)
+        self.slider.setRange(0, self.max_scale)
         self.slider.valueChanged[int].connect(self.__scale_changed)
         self.entry.textEdited.connect(self.__entry_changed)
-        self.entry.setFixedWidth((self.TOLERANCE + 2) * 9)
+        self.entry.setFixedWidth((self.tolerance + 2) * 9)
         self.value = 0.0
         self.update()
 
@@ -46,14 +46,14 @@ class PlaneSettingsDock(Dock):
         self.entry.setText(str(self.value))
 
     def __update_slider(self):
-        self.slider.setValue(round(self.value * self.MAX_SCALE))
+        self.slider.setValue(round(self.value * self.max_scale))
 
     def update(self):
         self.__update_entry()
         self.__update_slider()
 
     def __scale_changed(self, value: int):
-        self.value = value / self.MAX_SCALE
+        self.value = value / self.max_scale
         self.__update_entry()
 
     def __entry_changed(self, value: str):

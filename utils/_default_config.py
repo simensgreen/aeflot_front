@@ -46,6 +46,7 @@ DEFAULT_CONFIG['axonometric'] = {
 
 DEFAULT_CONFIG['model'] = {
     'model formats': '*.obj *.stl',
-    'startup model': 'assets/wing_demo.obj',
+    'startup model': '',
     'normalize on load': 'true',
+    'plane tolerance order': '8',
 }

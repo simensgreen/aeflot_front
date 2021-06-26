@@ -25,8 +25,9 @@ class AeflotFrontSettingsWidget(QWidget):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
         self.tabs = QTabWidget()
-        main_layout.addWidget(QLabel(text="Если это возможно, настройки применяются сразу, "
-                                          "иначе - после сохранения и перезапуска"))
+        main_layout.addWidget(QLabel(text="Если это возможно, настройки применяются сразу\n"
+                                          "* помечены настройки, вступающие в силу после "
+                                          "сохранения и перезагрузки"))
         main_layout.addWidget(self.tabs)
         buttons_layout = QHBoxLayout()
         main_layout.addLayout(buttons_layout)
@@ -104,7 +105,7 @@ class ModelSettings(SettingsWidget):
         layout = QHBoxLayout()
         self.main_layout.addLayout(layout)
 
-        startup_load_check = QCheckBox(text="Открывать при запуске")
+        startup_load_check = QCheckBox(text="*Открывать при запуске")
         startup_load_check.setChecked(bool(self.app_data.config['model']['startup model']))
         startup_load_check.clicked.connect(self.switch_startup_path)
         layout.addWidget(startup_load_check)
@@ -114,6 +115,12 @@ class ModelSettings(SettingsWidget):
         self.startup_path.setFixedWidth(300)
         self.startup_path.setText(self.app_data.config['model']['startup model'])
 
+        tolerance_order = self.add_label_entry("*Порядок точности шкалы плоскости")
+        tolerance_order.setText(self.app_data.config['model']['plane tolerance order'])
+        tolerance_order.setValidator(QRegExpValidator(QRegExp(r"\d+")))
+        tolerance_order.setText(self.app_data.config['model']['plane tolerance order'])
+        tolerance_order.textEdited.connect(self.change_tolerance_order)
+
         norm_on_load = QCheckBox(text="Нормализовывать при открытии")
         norm_on_load.setChecked(self.app_data.config['model'].getboolean("normalize on load"))
         norm_on_load.clicked.connect(lambda val:
@@ -121,6 +128,9 @@ class ModelSettings(SettingsWidget):
         self.main_layout.addWidget(norm_on_load)
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+    def change_tolerance_order(self, value):
+        self.app_data.config['model']['plane tolerance order'] = value
 
     def switch_startup_path(self, value):
         if value:
@@ -140,26 +150,26 @@ class WindowSettings(SettingsWidget):
     def __init__(self, app_data):
         super().__init__(app_data)
 
-        title = self.add_label_entry("Заголовок")
+        title = self.add_label_entry("*Заголовок")
         title.setText(self.app_data.config['window']['title'])
         title.textChanged.connect(lambda val: self.app_data.config['window'].__setitem__('title', val))
 
-        x_position = self.add_label_entry("Положение по горизонтали")
+        x_position = self.add_label_entry("*Положение по горизонтали")
         x_position.setValidator(QIntValidator())
         x_position.setText(self.app_data.config['window']['x'])
         x_position.textChanged.connect(lambda val: self.app_data.config['window'].__setitem__('x', val))
 
-        y_position = self.add_label_entry("Положение по вертикали")
+        y_position = self.add_label_entry("*Положение по вертикали")
         y_position.setValidator(QIntValidator())
         y_position.setText(self.app_data.config['window']['y'])
         y_position.textChanged.connect(lambda val: self.app_data.config['window'].__setitem__('y', val))
 
-        width = self.add_label_entry("Ширина")
+        width = self.add_label_entry("*Ширина")
         width.setText(self.app_data.config['window']['width'])
         width.setValidator(QIntValidator())
         width.textChanged.connect(lambda val: self.app_data.config['window'].__setitem__('width', val))
 
-        height = self.add_label_entry("Высота")
+        height = self.add_label_entry("*Высота")
         height.setValidator(QIntValidator())
         height.setText(self.app_data.config['window']['height'])
         height.textChanged.connect(lambda val: self.app_data.config['window'].__setitem__('height', val))
@@ -172,17 +182,17 @@ class AxonometricSettings(SettingsWidget):
         super().__init__(app_data)
         config = self.app_data.config['axonometric']
 
-        startup_cam_distance = self.add_label_entry("Расстояние до камеры при запуске")
+        startup_cam_distance = self.add_label_entry("*Расстояние до камеры при запуске")
         startup_cam_distance.setValidator(self.float_validator)
         startup_cam_distance.setText(config['startup camera distance'])
         startup_cam_distance.textChanged.connect(lambda val: config.__setitem__('startup camera distance', val))
 
-        startup_cam_azimuth = self.add_label_entry("Азимут камеры при запуске")
+        startup_cam_azimuth = self.add_label_entry("*Азимут камеры при запуске")
         startup_cam_azimuth.setValidator(self.float_validator)
         startup_cam_azimuth.setText(config['startup camera azimuth'])
         startup_cam_azimuth.textChanged.connect(lambda val: config.__setitem__('startup camera azimuth', val))
 
-        startup_cam_elevation = self.add_label_entry("Высота камеры при запуске")
+        startup_cam_elevation = self.add_label_entry("*Высота камеры при запуске")
         startup_cam_elevation.setValidator(self.float_validator)
         startup_cam_elevation.setText(config['startup camera elevation'])
         startup_cam_elevation.textChanged.connect(lambda val: config.__setitem__('startup camera elevation', val))
@@ -213,7 +223,7 @@ class AxonometricSettings(SettingsWidget):
 
         rot_method_layout = QHBoxLayout()
         self.main_layout.addLayout(rot_method_layout)
-        rot_method_layout.addWidget(QLabel(text='Метод вращения'))
+        rot_method_layout.addWidget(QLabel(text='*Метод вращения'))
         rot_method_combobox = QComboBox()
         rot_method_combobox.addItems(ROTATION_METHODS)
         rot_method_combobox.setCurrentText(config['rotation method'])
