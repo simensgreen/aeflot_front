@@ -1,7 +1,13 @@
-import functools
+from functools import lru_cache
 
 
-@functools.lru_cache()
+@lru_cache(maxsize=1024)
+def find_intersections_section(sections, plane_height):
+    intersections = (find_intersection_point(section[0], section[1], plane_height) for section in sections)
+    return [intersection for intersection in intersections if intersection]
+
+
+@lru_cache(maxsize=1024)
 def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: float):
     """
     Данный метод находит пересечение прямой и плоскости

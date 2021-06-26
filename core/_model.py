@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import open3d
 
-from core.find_coords_point import find_intersection_point
+from core.find_coords_point import find_intersections_section
 
 
 @dataclass(frozen=True)
@@ -79,7 +79,7 @@ class Model:
 
     @property
     def sections(self):
-        return [(tuple(map(float, self.vertices[i])), tuple(map(float, self.vertices[(i + 1) % len(self.vertices)]))) for i in range(len(self.vertices))]
+        return tuple((tuple(triangle[i]), tuple(triangle[(i + 1) % 3])) for triangle in self.vertexes for i in range(3))
 
     @property
     def current_plane_projection(self):
@@ -99,8 +99,7 @@ class Model:
 
     @property
     def current_plane_points(self):
-        points = (find_intersection_point(section[0], section[1], self.current_plane_value) for section in self.sections)
-        return np.array([point for point in points if point])
+        return find_intersections_section(self.sections, self.current_plane_value)
 
     @property
     def aabb(self):
