@@ -27,8 +27,8 @@ def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: 
 
     elif start_point[number] <= plane_height <= end_point[number] or start_point[number] >= plane_height >= end_point[number]:
         try:
-            sought_x = start_point[0] + (end_point[0] / end_point[2]) * (plane_height - start_point[2])
-            sought_y = start_point[1] + (end_point[1] / end_point[2]) * (plane_height - start_point[2])
+            sought_x = start_point[0] + (end_point[0] / end_point[2]) * (-start_point[2])
+            sought_y = start_point[1] + (end_point[1] / end_point[2]) * (-start_point[2])
             sought_z = plane_height
             return sought_x, sought_y, sought_z
         except ZeroDivisionError:

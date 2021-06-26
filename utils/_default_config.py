@@ -19,9 +19,9 @@ DEFAULT_CONFIG['window'] = {
 }
 
 DEFAULT_CONFIG['projections'] = {
-    'points color': "#FF0000",
+    'points color': "",
     'points size': "0.02",
-    'stroke color': "#6666CC",
+    'stroke color': "",
     'stroke width': "0.01",
     'fill color': '#FFFFFF'
 }
@@ -31,6 +31,9 @@ DEFAULT_CONFIG['axonometric'] = {
     'startup camera azimuth': '20',
     'startup camera elevation': '10',
     'startup camera position': '0 0 0',
+    'points': 'false',
+    'points color': "1 0 0 1",
+    'points radius': ".002",
     'plane': 'true',
     'model': 'true',
     'axes': 'true',

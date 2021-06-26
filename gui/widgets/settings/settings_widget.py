@@ -14,7 +14,8 @@ SHADERS = ['', 'balloon', 'normalColor', 'viewNormalColor', 'shaded', 'edgeHilig
 class AeflotFrontSettingsWidget(QWidget):
     def __init__(self, app_data: AppData):
         super().__init__()
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.Tool)
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.app_data = app_data
         self.tabs = None
 
@@ -168,18 +169,32 @@ class AxonometricSettings(SettingsWidget):
         startup_cam_distance = self.add_label_entry("Расстояние до камеры при запуске")
         startup_cam_distance.setValidator(self.float_validator)
         startup_cam_distance.setText(config['startup camera distance'])
+        startup_cam_distance.textChanged.connect(lambda val: config.__setitem__('startup camera distance', val))
 
-        startup_cam_distance = self.add_label_entry("Азимут камеры при запуске")
-        startup_cam_distance.setValidator(self.float_validator)
-        startup_cam_distance.setText(config['startup camera azimuth'])
+        startup_cam_azimuth = self.add_label_entry("Азимут камеры при запуске")
+        startup_cam_azimuth.setValidator(self.float_validator)
+        startup_cam_azimuth.setText(config['startup camera azimuth'])
+        startup_cam_azimuth.textChanged.connect(lambda val: config.__setitem__('startup camera azimuth', val))
 
         startup_cam_elevation = self.add_label_entry("Высота камеры при запуске")
         startup_cam_elevation.setValidator(self.float_validator)
         startup_cam_elevation.setText(config['startup camera elevation'])
+        startup_cam_elevation.textChanged.connect(lambda val: config.__setitem__('startup camera elevation', val))
+
+        points_radius = self.add_label_entry("Радиус точек")
+        points_radius.setValidator(self.float_validator)
+        points_radius.setText(config['points radius'])
+        points_radius.textChanged.connect(self.change_points_radius)
 
         plane_color_btn = self.add_label_color_btn('Цвет плоскости сечения',
-                                                   tuple(map(lambda val: round(float(val) * 255), config['plane color'].split())))
+                                                   tuple(map(lambda val: round(float(val) * 255),
+                                                             config['plane color'].split())))
         plane_color_btn.sigColorChanged.connect(self.change_color)
+
+        points_color_btn = self.add_label_color_btn('Цвет точек',
+                                                    tuple(map(lambda val: round(float(val) * 255),
+                                                              config['points color'].split())))
+        points_color_btn.sigColorChanged.connect(self.change_points_color)
 
         shader_layout = QHBoxLayout()
         self.main_layout.addLayout(shader_layout)
@@ -205,10 +220,15 @@ class AxonometricSettings(SettingsWidget):
         plane.setChecked(config.getboolean("plane"))
         plane.clicked.connect(self.check_plane)
 
-        model = QCheckBox(text='Показывать Модель')
+        model = QCheckBox(text='Показывать модель')
         self.main_layout.addWidget(model)
         model.setChecked(config.getboolean("model"))
         model.clicked.connect(self.check_model)
+
+        points = QCheckBox(text='Показывать точки')
+        self.main_layout.addWidget(points)
+        points.setChecked(config.getboolean("points"))
+        points.clicked.connect(self.check_points)
 
         auto_center = QCheckBox(text="Центровать камеру")
         self.main_layout.addWidget(auto_center)
@@ -217,6 +237,19 @@ class AxonometricSettings(SettingsWidget):
                                     self.app_data.config['axonometric'].__setitem__("automatic center", str(val)))
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+    def change_points_radius(self, value):
+        self.app_data.config['axonometric']['points radius'] = value if value and value != '.' else "0"
+        self.app_data.handlers.call(AppEvent.ModelChanged)
+
+    def change_points_color(self, value):
+        new_color = value.color('float')
+        self.app_data.config['axonometric']['points color'] = ' '.join(map(str, new_color))
+        self.app_data.handlers.call(AppEvent.ModelChanged)
+
+    def check_points(self, value):
+        self.app_data.config['axonometric']['points'] = str(value)
+        self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def check_axes(self, value):
         self.app_data.config['axonometric']['axes'] = str(value)
@@ -274,10 +307,12 @@ class ProjectionsSettings(SettingsWidget):
         self.fill_color_btn = self.add_label_color_btn("Цвет заливки", config['fill color'])
         self.fill_color_btn.sigColorChanged.connect(self.fill_color)
 
-        self.stroke_color_btn = self.add_label_color_btn("Цвет канта", config['stroke color'])
+        stroke_color = config['stroke color'] if config['stroke color'] else '#FFFFFF'
+        self.stroke_color_btn = self.add_label_color_btn("Цвет канта", stroke_color)
         self.stroke_color_btn.sigColorChanged.connect(self.stroke_color)
 
-        self.point_color_btn = self.add_label_color_btn("Цвет точек", config['points color'])
+        points_color = config['points color'] if config['points color'] else '#FFFFFF'
+        self.point_color_btn = self.add_label_color_btn("Цвет точек", points_color)
         self.point_color_btn.sigColorChanged.connect(self.points_color)
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))

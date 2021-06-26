@@ -81,6 +81,10 @@ class Model:
     def sections(self):
         return [(tuple(map(float, self.vertices[i])), tuple(map(float, self.vertices[(i + 1) % len(self.vertices)]))) for i in range(len(self.vertices))]
 
+    @property
+    def current_plane_projection(self):
+        return [(point[0], point[1]) for point in self.current_plane_points]
+
     @staticmethod
     def rotation_x(radians):
         return np.array(((1, 0, 0), (0, np.cos(radians), -np.sin(radians)), (0, np.sin(radians), np.cos(radians))))

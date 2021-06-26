@@ -101,11 +101,11 @@ class RotateModelYCommand(Command):
         self.radians = radians
 
     def do(self):
-        self.app_data.model.rotate_x(self.radians)
+        self.app_data.model.rotate_y(self.radians)
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def undo(self):
-        self.app_data.model.rotate_x(-self.radians)
+        self.app_data.model.rotate_y(-self.radians)
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
 
@@ -115,9 +115,9 @@ class RotateModelZCommand(Command):
         self.radians = radians
 
     def do(self):
-        self.app_data.model.rotate_x(self.radians)
+        self.app_data.model.rotate_z(self.radians)
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def undo(self):
-        self.app_data.model.rotate_x(-self.radians)
+        self.app_data.model.rotate_z(-self.radians)
         self.app_data.handlers.call(AppEvent.ModelChanged)

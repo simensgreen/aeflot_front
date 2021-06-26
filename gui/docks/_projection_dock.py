@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QRectF, QPointF, QSizeF
 from PyQt5.QtGui import QPicture, QPainter, QPainterPath, QPen
-from pyqtgraph import PlotWidget, GraphicsObject, mkBrush
+from pyqtgraph import PlotWidget, GraphicsObject, mkBrush, PlotItem
 from pyqtgraph.dockarea import Dock
 
 from utils import AppData, AppEvent
@@ -15,14 +15,15 @@ class ProjectionDock(Dock):
         self.widget.setAntialiasing(True)
         self.addWidget(self.widget)
 
-        plot = self.widget.getPlotItem()
-        self.projection = ProjectionItem(self.app_data.model.current_plane_points, app_data)
-        plot.addItem(self.projection)
+        self.plot: PlotItem = self.widget.getPlotItem()
+        self.projection = ProjectionItem(self.app_data.model.current_plane_projection, app_data)
+        self.plot.addItem(self.projection)
 
         self.app_data.handlers.add(self.update, AppEvent.ModelChanged)
 
     def update(self):
-        self.projection.data = self.app_data.model.current_plane_points
+        self.projection.data = self.app_data.model.current_plane_projection
+        self.plot.replot()
 
     def remove(self):
         self.deleteLater()
@@ -73,7 +74,7 @@ class ProjectionItem(GraphicsObject):
 
     @data.setter
     def data(self, new):
-        self.__data = [(point[0], point[1]) for point in new]
+        self.__data = new
         self.update_picture()
 
     def paint(self, p, *_args):
