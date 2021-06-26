@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog
 
 from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand, RotateModelZCommand, \
     RotateModelXCommand, RotateModelYCommand, MoveModelCommand
+from gui.widgets.menu_bar.docks_menu import DocksMenu
 from gui.widgets.menu_bar.multiline_dialog import MultilineDialog
 from utils import AppData, Command, AppEvent
 
@@ -26,13 +27,15 @@ class SetLoggingFileNameCommand(Command):
 
 
 class AeflotFrontMenuBar(QMenuBar):
-    def __init__(self, app_data: AppData):
+    def __init__(self, app_data: AppData, dock_area):
         super().__init__()
         self.app_data = app_data
         self.history = app_data.history
         self.add_file_menu(self.addMenu("Файл"))
         self.add_model_menu(self.addMenu("Модель"))
-        self.add_docks_menu(self.addMenu("Доки"))
+        self.docks_menu = DocksMenu(self.app_data, dock_area)
+        self.addMenu(self.docks_menu)
+        # self.add_docks_menu(self.addMenu("Доки"))
         self.add_app_menu(self.addMenu("Приложение"))
         help_action = self.addAction('Справка')
         help_action.setShortcut("F1")
@@ -48,8 +51,10 @@ class AeflotFrontMenuBar(QMenuBar):
         normalize_model.triggered.connect(self.normalize_model)
         scale_model = menu.addAction("Масштабировать")
         scale_model.triggered.connect(self.scale_model)
+        scale_model.setShortcut("Ctrl+S")
         move_model = menu.addAction("Переместить")
         move_model.triggered.connect(self.move_model)
+        move_model.setShortcut("Ctrl+M")
         rotate_menu = menu.addMenu("Вращать")
         rotate_x = rotate_menu.addAction("Вокруг OX")
         rotate_x.triggered.connect(self.rotate_x)
@@ -67,9 +72,6 @@ class AeflotFrontMenuBar(QMenuBar):
         undo_action.triggered.connect(self.history.cancel_last)
         save_config_action = menu.addAction("Сохранить настройки")
         save_config_action.triggered.connect(self.save_config)
-
-    def add_docks_menu(self, menu):
-        pass
 
     def add_app_menu(self, menu):
         self.add_settings_menu(menu.addMenu("Настройки"))
@@ -120,9 +122,20 @@ class AeflotFrontMenuBar(QMenuBar):
         self.history.add(NormalizeModelCommand(self.app_data))
 
     def scale_model(self):
-        factor, not_cancel = QInputDialog.getDouble(self, "Масштабирование", 'Пока доступен только один множитель')
-        if not_cancel:
-            self.history.add(ScaleModelCommand((factor, factor, factor), self.app_data))
+        validator = QRegExpValidator(QRegExp(r"\-?\d*\.?\d*"))
+        dialog = MultilineDialog("Масштабирование",
+                                 {'name': 'x', 'default': '1.0', 'validator': validator},
+                                 {'name': 'y', 'default': '1.0', 'validator': validator},
+                                 {'name': 'z', 'default': '1.0', 'validator': validator},
+                                 ok='Масштабировать'
+                                 )
+        dialog.exec()
+        x, y, z = dialog.entries['x'].text(), dialog.entries['y'].text(), dialog.entries['z'].text()
+        x = float(x) if x else 1.0
+        y = float(y) if y else 1.0
+        z = float(z) if z else 1.0
+        if not dialog.cancelled and any((x != 1.0, y != 1.0, z != 1.0)):
+            self.history.add(ScaleModelCommand((x, y, z), self.app_data))
 
     @staticmethod
     def __rotation_dialog(axis):

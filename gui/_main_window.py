@@ -15,7 +15,8 @@ class AeflotFrontMainWindow(QMainWindow):
         self.setWindowTitle(config['title'])
         self.setGeometry(config.getint('x'), config.getint('y'), config.getint('width'), config.getint('height'))
 
-        self.setCentralWidget(AeflotFrontDockArea(self.app_data))
-        self.setMenuBar(AeflotFrontMenuBar(self.app_data))
+        dock_area = AeflotFrontDockArea(self.app_data)
+        self.setCentralWidget(dock_area)
+        self.setMenuBar(AeflotFrontMenuBar(self.app_data, dock_area))
 
         self.app_data.logger.dbg("Инициализация интерфейса прошла успешно")

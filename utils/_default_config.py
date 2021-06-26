@@ -13,7 +13,7 @@ DEFAULT_CONFIG['logging'] = {
 DEFAULT_CONFIG['window'] = {
     'x': '200',
     'y': '200',
-    'width': '1600',
+    'width': '1400',
     'height': '700',
     'title': 'AeflotFront'
 }

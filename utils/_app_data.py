@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from core import Model
 from ._logger import Logger
@@ -14,3 +14,4 @@ class AppData:
     history: History
     logger: Logger
     handlers: Handlers
+    docks: set = field(default_factory=set)

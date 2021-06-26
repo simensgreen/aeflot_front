@@ -22,3 +22,7 @@ class HistoryDock(Dock):
             self.widget.setItem(no, 0, QTableWidgetItem(str(event.date)))
             self.widget.setItem(no, 1, QTableWidgetItem(str(event.command)))
             self.widget.setItem(no, 2, QTableWidgetItem(str(event.status)))
+
+    def remove(self):
+        self.deleteLater()
+        self.app_data.handlers.remove(self.handler_id)

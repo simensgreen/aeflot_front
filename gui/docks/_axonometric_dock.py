@@ -20,6 +20,7 @@ class AxonometricDock(Dock):
         self.widget.orbit(self.config.getfloat('startup camera azimuth'),
                           self.config.getfloat('startup camera elevation'))
         self.addWidget(self.widget)
+        self.full_update()
 
     def add_model(self):
         aabb = self.app_data.model.aabb

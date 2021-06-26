@@ -6,6 +6,7 @@ class AppEvent(enum.Enum):
     PlanesChanged = enum.auto()
     ModelChanged = enum.auto()
     HistoryChanged = enum.auto()
+    DocksChanged = enum.auto()
     ExitApp = enum.auto()
 
 

@@ -7,14 +7,15 @@ from gui.docks._history_dock import HistoryDock
 from gui.docks._plane_settings_dock import PlaneSettingsDock
 from gui.docks._planes_list_dock import PlanesListDock
 from gui.docks._projection_dock import ProjectionDock
-from utils import AppData, Command
+from utils import AppData, Command, AppEvent
 
 
 class Docks(enum.Enum):
     Axonometric = enum.auto()
     PlaneSettings = enum.auto()
     ProjectionXZ = enum.auto()
-    PlanesDock = enum.auto()
+    PlanesListDock = enum.auto()
+    HistoryDock = enum.auto()
 
 
 class AddDockCommand(Command):
@@ -23,24 +24,74 @@ class AddDockCommand(Command):
         self.area = area
 
     def undo(self):
+        if self.dock_type not in self.area.app_data.docks:
+            return
         if self.dock_type == Docks.Axonometric:
             self.area.remove_axonometric()
         elif self.dock_type == Docks.PlaneSettings:
             self.area.remove_plane_settings()
         elif self.dock_type == Docks.ProjectionXZ:
             self.area.remove_projection('XZ')
-        elif self.dock_type == Docks.PlanesDock:
+        elif self.dock_type == Docks.PlanesListDock:
             self.area.remove_planes()
+        elif self.dock_type == Docks.HistoryDock:
+            self.area.remove_history()
+        self.area.app_data.docks.remove(self.dock_type)
+        self.area.app_data.handlers.call(AppEvent.DocksChanged)
 
     def do(self):
+        if self.dock_type in self.area.app_data.docks:
+            return
         if self.dock_type == Docks.Axonometric:
             self.area.add_axonometric()
         elif self.dock_type == Docks.PlaneSettings:
             self.area.add_plane_settings()
         elif self.dock_type == Docks.ProjectionXZ:
             self.area.add_projection("XZ")
-        elif self.dock_type == Docks.PlanesDock:
+        elif self.dock_type == Docks.PlanesListDock:
             self.area.add_planes_list()
+        elif self.dock_type == Docks.HistoryDock:
+            self.area.add_history()
+        self.area.app_data.docks.add(self.dock_type)
+        self.area.app_data.handlers.call(AppEvent.DocksChanged)
+
+
+class RemoveDockCommand(Command):
+    def __init__(self, area: "AeflotFrontDockArea", dock_type: Docks):
+        self.dock_type = dock_type
+        self.area = area
+
+    def undo(self):
+        if self.dock_type in self.area.app_data.docks:
+            return
+        if self.dock_type == Docks.Axonometric:
+            self.area.add_axonometric()
+        elif self.dock_type == Docks.PlaneSettings:
+            self.area.add_plane_settings()
+        elif self.dock_type == Docks.ProjectionXZ:
+            self.area.add_projection("XZ")
+        elif self.dock_type == Docks.PlanesListDock:
+            self.area.add_planes_list()
+        elif self.dock_type == Docks.HistoryDock:
+            self.area.add_history()
+        self.area.app_data.docks.add(self.dock_type)
+        self.area.app_data.handlers.call(AppEvent.DocksChanged)
+
+    def do(self):
+        if self.dock_type not in self.area.app_data.docks:
+            return
+        if self.dock_type == Docks.Axonometric:
+            self.area.remove_axonometric()
+        elif self.dock_type == Docks.PlaneSettings:
+            self.area.remove_plane_settings()
+        elif self.dock_type == Docks.ProjectionXZ:
+            self.area.remove_projection('XZ')
+        elif self.dock_type == Docks.PlanesListDock:
+            self.area.remove_planes()
+        elif self.dock_type == Docks.HistoryDock:
+            self.area.remove_history()
+        self.area.app_data.docks.remove(self.dock_type)
+        self.area.app_data.handlers.call(AppEvent.DocksChanged)
 
 
 class AeflotFrontDockArea(DockArea):
@@ -50,13 +101,13 @@ class AeflotFrontDockArea(DockArea):
         self.plane_settings = None
         self.projection = None
         self.planes_list = None
+        self.history_dock = None
 
         self.app_data = app_data
         self.history = app_data.history
         self.history.add(AddDockCommand(self, Docks.Axonometric))
         self.history.add(AddDockCommand(self, Docks.PlaneSettings))
         self.history.add(AddDockCommand(self, Docks.ProjectionXZ))
-        self.history.add(AddDockCommand(self, Docks.PlanesDock))
 
     def add_axonometric(self):
         self.axonometric = AxonometricDock(self.app_data)
@@ -93,3 +144,11 @@ class AeflotFrontDockArea(DockArea):
     def remove_planes(self):
         self.planes_list.remove()
         self.planes_list = None
+
+    def add_history(self):
+        self.history_dock = HistoryDock(self.app_data)
+        self.addDock(self.history_dock, 'right')
+
+    def remove_history(self):
+        self.history_dock.remove()
+        self.history_dock = None
