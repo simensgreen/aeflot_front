@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 import open3d
 
+from core.find_coords_point import find_intersection_point
+
 
 @dataclass(frozen=True)
 class Plane:
@@ -75,6 +77,10 @@ class Model:
         shape = self.vertices.shape
         return self.vertices.reshape((shape[0] // 3, 3, 3))
 
+    @property
+    def sections(self):
+        return [(tuple(map(float, self.vertices[i])), tuple(map(float, self.vertices[(i + 1) % len(self.vertices)]))) for i in range(len(self.vertices))]
+
     @staticmethod
     def rotation_x(radians):
         return np.array(((1, 0, 0), (0, np.cos(radians), -np.sin(radians)), (0, np.sin(radians), np.cos(radians))))
@@ -89,7 +95,8 @@ class Model:
 
     @property
     def current_plane_points(self):
-        return np.array([])
+        points = (find_intersection_point(section[0], section[1], self.current_plane_value) for section in self.sections)
+        return np.array([point for point in points if point])
 
     @property
     def aabb(self):

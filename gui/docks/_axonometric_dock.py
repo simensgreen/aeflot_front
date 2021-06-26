@@ -57,12 +57,28 @@ class AxonometricDock(Dock):
 
     def full_update(self):
         self.clear()
+        for point in self.app_data.model.current_plane_points:
+            self.add_point(*point)
         if self.app_data.config['axonometric'].getboolean('model'):
             self.add_model()
         if self.app_data.config['axonometric'].getboolean('plane'):
             self.add_plane()
         if self.app_data.config['axonometric'].getboolean('axes'):
             self.add_axis()
+
+    def add_point(self, x, y, z):
+
+        md = MeshData.sphere(rows=10, cols=20, radius=.002)
+        # colors = np.random.random(size=(md.faceCount(), 4))
+        # colors[:,3] = 0.3
+        # colors[100:] = 0.0
+        colors = np.ones((md.faceCount(), 4), dtype=float)
+        colors[::1, 0] = 0
+        # colors[:, 1] = np.linspace(0, 1, colors.shape[0])
+        md.setFaceColors(colors)
+        m3 = GLMeshItem(meshdata=md, smooth=False)  # , shader='balloon')
+        m3.translate(x, y, z)
+        self.widget.addItem(m3)
 
     def remove(self):
         self.app_data.handlers.remove(self.handler_id)

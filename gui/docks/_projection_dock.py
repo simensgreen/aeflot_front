@@ -73,7 +73,7 @@ class ProjectionItem(GraphicsObject):
 
     @data.setter
     def data(self, new):
-        self.__data = new
+        self.__data = [(point[0], point[1]) for point in new]
         self.update_picture()
 
     def paint(self, p, *_args):

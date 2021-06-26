@@ -14,7 +14,7 @@ SHADERS = ['', 'balloon', 'normalColor', 'viewNormalColor', 'shaded', 'edgeHilig
 class AeflotFrontSettingsWidget(QWidget):
     def __init__(self, app_data: AppData):
         super().__init__()
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.SubWindow)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.app_data = app_data
         self.tabs = None
 

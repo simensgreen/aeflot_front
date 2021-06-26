@@ -1,4 +1,7 @@
+import functools
 
+
+@functools.lru_cache()
 def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: float):
     """
     Данный метод находит пересечение прямой и плоскости
@@ -15,16 +18,18 @@ def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: 
     Examples:
         >>> find_intersection_point((10.0, -2.0, 3.0), (100.0, 2.0, 9.0), .5)
     """
+    number = 2
+    if start_point[number] == plane_height == end_point[number]:
+        return None
 
-    if start_point[2] == plane_height == end_point[2]:
-        return "Количество точек пересечения бесконечно!"
+    elif start_point[number] == end_point[number] and start_point[number] != plane_height:
+        return None
 
-    elif start_point[2] == end_point[2] and start_point[2] != plane_height:
-        return "Прямая параллельна плоскости"
-
-    elif start_point[2] <= plane_height <= end_point[2] or start_point[2] >= plane_height >= end_point[2]:
-        sought_x = plane_height   # sought - искомый (с англ.)
-        sought_y = start_point[1] + (end_point[1] / end_point[0]) * (plane_height - start_point[0])
-        sought_z = start_point[2] + (end_point[2] / end_point[0]) * (plane_height - start_point[0])
-        return sought_x, sought_y, sought_z
-
+    elif start_point[number] <= plane_height <= end_point[number] or start_point[number] >= plane_height >= end_point[number]:
+        try:
+            sought_x = start_point[0] + (end_point[0] / end_point[2]) * (plane_height - start_point[2])
+            sought_y = start_point[1] + (end_point[1] / end_point[2]) * (plane_height - start_point[2])
+            sought_z = plane_height
+            return sought_x, sought_y, sought_z
+        except ZeroDivisionError:
+            return None
