@@ -1,7 +1,13 @@
-from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog, QDialog, QVBoxLayout, QLineEdit
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QMenuBar, QFileDialog, QInputDialog
 
-from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand
+from core.model_commands import LoadModelCommand, NormalizeModelCommand, ScaleModelCommand, RotateModelZCommand, \
+    RotateModelXCommand, RotateModelYCommand
+from gui.widgets.menu_bar.multiline_dialog import MultilineDialog
 from utils import AppData, Command, AppEvent
+
+import numpy as np
 
 
 class SetLoggingFileNameCommand(Command):
@@ -47,7 +53,9 @@ class AeflotFrontMenuBar(QMenuBar):
         rotate_x = rotate_menu.addAction("Вокруг OX")
         rotate_x.triggered.connect(self.rotate_x)
         rotate_y = rotate_menu.addAction("Вокруг OY")
+        rotate_y.triggered.connect(self.rotate_y)
         rotate_z = rotate_menu.addAction("Вокруг OZ")
+        rotate_z.triggered.connect(self.rotate_z)
 
     def add_file_menu(self, menu):
         open_model = menu.addAction("Открыть модель")
@@ -115,10 +123,36 @@ class AeflotFrontMenuBar(QMenuBar):
         if not_cancel:
             self.history.add(ScaleModelCommand((factor, factor, factor), self.app_data))
 
-    def rotate_x(self):
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Вращение вокруг OX")
-        main_layout = QVBoxLayout()
-        dialog.setLayout(main_layout)
-        main_layout.addWidget(QLineEdit())
+    @staticmethod
+    def __rotation_dialog(axis):
+        def change_rad(value):
+            dialog.entries['Радианы'].setText(str(np.radians(float(value if value else 0))))
+
+        def change_deg(value):
+            dialog.entries['Градусы'].setText(str(np.degrees(float(value if value else 0))))
+
+        validator = QRegExpValidator(QRegExp(r"\-?\d*\.?\d*"))
+        dialog = MultilineDialog(f'{axis} вращение',
+                                 {'name': 'Градусы', 'default': '0.0', 'validator': validator},
+                                 {'name': 'Радианы', 'default': '0.0', 'validator': validator},
+                                 ok='Вращать')
+        dialog.entries['Градусы'].textEdited.connect(change_rad)
+        dialog.entries['Радианы'].textEdited.connect(change_deg)
         dialog.exec()
+        result = dialog.entries['Радианы'].text()
+        return float(result if result else 0.0), dialog.cancelled
+
+    def rotate_x(self):
+        result = self.__rotation_dialog("OX")
+        if result[0] and not result[1]:
+            self.history.add(RotateModelXCommand(result[0], self.app_data))
+
+    def rotate_y(self):
+        result = self.__rotation_dialog("OY")
+        if result[0] and not result[1]:
+            self.history.add(RotateModelYCommand(result[0], self.app_data))
+
+    def rotate_z(self):
+        result = self.__rotation_dialog("OZ")
+        if result[0] and not result[1]:
+            self.history.add(RotateModelZCommand(result[0], self.app_data))
