@@ -315,10 +315,10 @@ class ProjectionsSettings(SettingsWidget):
         convex_check.setChecked(config.getboolean("use convex hull"))
         convex_check.clicked.connect(self.check_convex)
 
-        fill_check = QCheckBox(text="Заливка")
-        self.main_layout.addWidget(fill_check)
-        fill_check.setChecked(bool(config['fill color']))
-        fill_check.clicked.connect(self.check_fill)
+        self.fill_check = QCheckBox(text="Заливка")
+        self.main_layout.addWidget(self.fill_check)
+        self.fill_check.setChecked(bool(config['fill color']))
+        self.fill_check.clicked.connect(self.check_fill)
 
         stroke_check = QCheckBox(text="Кант")
         self.main_layout.addWidget(stroke_check)
@@ -340,7 +340,8 @@ class ProjectionsSettings(SettingsWidget):
         self.point_size_entry.setValidator(self.float_validator)
         self.point_size_entry.textEdited.connect(self.change_points_width)
 
-        self.fill_color_btn = self.add_label_color_btn("Цвет заливки", config['fill color'])
+        color = config.get('fill_color', DEFAULT_CONFIG['projections']['fill color'])
+        self.fill_color_btn = self.add_label_color_btn("Цвет заливки", color)
         self.fill_color_btn.sigColorChanged.connect(self.fill_color)
 
         stroke_color = config['stroke color'] if config['stroke color'] else '#FFFFFF'
@@ -396,6 +397,7 @@ class ProjectionsSettings(SettingsWidget):
     def fill_color(self, value):
         color = self.extract_color(value)
         self.app_data.config['projections']['fill color'] = color
+        self.fill_check.setChecked(True)
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def stroke_color(self, value):

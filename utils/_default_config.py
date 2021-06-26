@@ -20,9 +20,9 @@ DEFAULT_CONFIG['window'] = {
 
 DEFAULT_CONFIG['projections'] = {
     'points color': "",
-    'points size': "0.02",
+    'points size': "0.005",
     'stroke color': "",
-    'stroke width': "0.01",
+    'stroke width': "0.005",
     'fill color': '#FFFFFF',
     'use convex hull': 'true',
 }
