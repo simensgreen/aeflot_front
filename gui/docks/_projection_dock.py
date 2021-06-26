@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QRectF, QPointF, QSizeF
-from PyQt5.QtGui import QPicture, QPainter, QPainterPath, QPen
+from PyQt5.QtCore import QRectF, QPointF, QSizeF, Qt
+from PyQt5.QtGui import QPicture, QPainter, QPainterPath, QPen, QPolygonF
 from pyqtgraph import PlotWidget, GraphicsObject, mkBrush, PlotItem
 from pyqtgraph.dockarea import Dock
 
@@ -43,10 +43,8 @@ class ProjectionItem(GraphicsObject):
         painter = QPainter(self.picture)
 
         path = QPainterPath()
-        path.moveTo(*self.data[0])
-        for i in range(1, len(self.data)):
-            x, y = self.data[i]
-            path.lineTo(float(x), float(y))
+        path.addPolygon(QPolygonF((QPointF(*point) for point in self.data)))
+        path.setFillRule(Qt.WindingFill)
         path.closeSubpath()
 
         fill_color = self.app_data.config['projections']['fill color']
