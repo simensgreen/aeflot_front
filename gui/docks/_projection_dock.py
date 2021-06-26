@@ -71,7 +71,7 @@ class ProjectionItem(GraphicsObject):
             points_width /= 2
             for point in self.data:
                 x, y = point
-                painter.fillRect(QRectF(QPointF(x - .01, y - .01), points_size), points_brush)
+                painter.fillRect(QRectF(QPointF(x - points_width, y - points_width), points_size), points_brush)
 
     @property
     def data(self):
