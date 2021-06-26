@@ -16,13 +16,20 @@ class ProjectionDock(Dock):
         self.addWidget(self.widget)
 
         self.plot: PlotItem = self.widget.getPlotItem()
-        self.projection = ProjectionItem(self.app_data.model.convex_hull_plane_projection, app_data)
+        if self.app_data.config['projections'].getboolean('use convex hull'):
+            points = self.app_data.model.convex_hull_plane_projection
+        else:
+            points = self.app_data.model.current_plane_projection
+        self.projection = ProjectionItem(points, app_data)
         self.plot.addItem(self.projection)
 
         self.app_data.handlers.add(self.update, AppEvent.ModelChanged)
 
     def update(self):
-        self.projection.data = self.app_data.model.convex_hull_plane_projection
+        if self.app_data.config['projections'].getboolean('use convex hull'):
+            self.projection.data = self.app_data.model.convex_hull_plane_projection
+        else:
+            self.projection.data = self.app_data.model.current_plane_projection
         self.plot.replot()
 
     def remove(self):

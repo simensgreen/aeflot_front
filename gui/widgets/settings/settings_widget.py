@@ -310,6 +310,11 @@ class ProjectionsSettings(SettingsWidget):
         super().__init__(app_data)
         config = self.app_data.config['projections']
 
+        convex_check = QCheckBox(text="Использовать выпуклую оболочку для построения проекции")
+        self.main_layout.addWidget(convex_check)
+        convex_check.setChecked(config.getboolean("use convex hull"))
+        convex_check.clicked.connect(self.check_convex)
+
         fill_check = QCheckBox(text="Заливка")
         self.main_layout.addWidget(fill_check)
         fill_check.setChecked(bool(config['fill color']))
@@ -346,6 +351,10 @@ class ProjectionsSettings(SettingsWidget):
         self.point_color_btn.sigColorChanged.connect(self.points_color)
 
         self.main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+    def check_convex(self, value):
+        self.app_data.config['projections']['use convex hull'] = str(value)
+        self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def change_points_width(self, value):
         value = float(value) if value and value != '-' or value != '.' else 0

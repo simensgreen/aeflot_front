@@ -23,7 +23,8 @@ DEFAULT_CONFIG['projections'] = {
     'points size': "0.02",
     'stroke color': "",
     'stroke width': "0.01",
-    'fill color': '#FFFFFF'
+    'fill color': '#FFFFFF',
+    'use convex hull': 'true',
 }
 
 DEFAULT_CONFIG['axonometric'] = {
