@@ -21,13 +21,20 @@ class LoadModelCommand(Command):
     def __init__(self, filename: str, app_data: AppData):
         self.app_data = app_data
         self.filename = filename
+        self.old_filename = None
 
     def do(self):
+        if self.app_data.model.filename:
+            self.old_filename = self.app_data.model.filename
         self.app_data.model.load_model(self.filename)
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
     def undo(self):
         self.app_data.model.unload_model()
+        if self.old_filename:
+            self.app_data.model.load_model(self.old_filename)
+            if self.app_data.config['model'].getboolean('normalize on load'):
+                self.app_data.history.add(NormalizeModelCommand(self.app_data))
         self.app_data.handlers.call(AppEvent.ModelChanged)
 
 

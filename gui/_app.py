@@ -5,6 +5,7 @@ from configparser import ConfigParser, ExtendedInterpolation
 from PyQt5.QtWidgets import QApplication
 
 from core import Model
+from core.model_commands import NormalizeModelCommand
 from gui import AeflotFrontMainWindow
 from utils import DEFAULT_CONFIG, AppData, History, Logger, Handlers, AppEvent
 import OpenGL.GL as OGL
@@ -22,7 +23,12 @@ class AeflotFrontApp:
         logger = Logger(config['logging'])
         handlers = Handlers()
         handlers.add(lambda: AeflotFrontApp.exit(logger), AppEvent.ExitApp, priority=-255)
-        app_data = AppData(Model(), config, History(logger, handlers), logger, handlers)
+        model = Model()
+        app_data = AppData(model, config, History(logger, handlers), logger, handlers)
+        if config['model']['startup model']:
+            model.load_model(config['model']['startup model'])
+        if config['model'].getboolean("normalize on load"):
+            app_data.history.add(NormalizeModelCommand(app_data))
         window = AeflotFrontMainWindow(app_data)
         window.show()
         app_data.logger.info('Приложение запущено')

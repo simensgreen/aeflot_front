@@ -86,6 +86,8 @@ class AeflotFrontMenuBar(QMenuBar):
         filename, not_cancel = QFileDialog.getOpenFileName(self, 'Открыть модель', '', filter='*.stl *.obj')
         if not_cancel:
             self.app_data.history.add(LoadModelCommand(filename, self.app_data))
+            if self.app_data.config['model'].getboolean("normalize on load"):
+                self.app_data.history.add(NormalizeModelCommand(self.app_data))
 
     def set_logging_filename(self):
         old_filename = self.app_data.config['logging']['filename']

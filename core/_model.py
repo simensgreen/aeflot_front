@@ -15,8 +15,10 @@ class Model:
         self.vertices = np.array(())
         self.planes = {}
         self.current_plane_value = 0.0
+        self.filename = None
 
     def load_model(self, filename: str):
+        self.filename = filename
         mesh = open3d.io.read_triangle_mesh(filename)
         self.vertices = np.array(tuple(mesh.vertices))
 
@@ -86,6 +88,10 @@ class Model:
         return np.array(((np.cos(radians), -np.sin(radians), 0), (np.sin(radians), np.cos(radians), 0), (0, 0, 1)))
 
     @property
+    def current_plane_points(self):
+        return np.array([])
+
+    @property
     def aabb(self):
         if len(self.vertices) != 0:
             min_x = max_x = self.vertices[0][0]
@@ -100,4 +106,4 @@ class Model:
                 max_x = max(max_x, vertex[0])
             return min_x, min_y, min_z, max_x, max_y, max_z
         else:
-            return 0, 0, 0, 1, 1, 1
+            return 0, 0, 0, 0, 0, 0

@@ -17,3 +17,28 @@ DEFAULT_CONFIG['window'] = {
     'height': '700',
     'title': 'AeflotFront'
 }
+
+DEFAULT_CONFIG['projections'] = {
+    'points color': "#FF0000",
+    'points size': "0.02",
+    'stroke color': "#6666CC",
+    'stroke width': "0.01",
+    'fill color': '#FFFFFF'
+}
+
+DEFAULT_CONFIG['axonometric'] = {
+    'startup camera distance': '1.5',
+    'startup camera azimuth': '20',
+    'startup camera elevation': '10',
+    'startup camera position': '0 0 0',
+    'axes': 'true',
+    'edges': 'true',
+    'shader': '',
+    'plane color': "0.4, 0.4, 0.8, 0.5"
+}
+
+DEFAULT_CONFIG['model'] = {
+    'model formats': '*.obj *.stl',
+    'startup model': 'assets/wing_demo.obj',
+    'normalize on load': 'true',
+}

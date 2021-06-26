@@ -5,8 +5,8 @@ from pyqtgraph.dockarea import DockArea
 from gui.docks._axonometric_dock import AxonometricDock
 from gui.docks._history_dock import HistoryDock
 from gui.docks._plane_settings_dock import PlaneSettingsDock
-from gui.docks._planes import PlanesListDock
-from gui.docks._projection import ProjectionDock
+from gui.docks._planes_list_dock import PlanesListDock
+from gui.docks._projection_dock import ProjectionDock
 from utils import AppData, Command
 
 
@@ -76,7 +76,7 @@ class AeflotFrontDockArea(DockArea):
         self.app_data.plane_settings = None
 
     def add_projection(self, plane):
-        self.projection = ProjectionDock(plane)
+        self.projection = ProjectionDock(plane, self.app_data)
         if self.axonometric:
             self.addDock(self.projection, 'right', self.axonometric)
         else:
