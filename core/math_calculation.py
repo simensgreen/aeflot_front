@@ -48,3 +48,24 @@ def find_intersection_point(start_point: tuple, end_point: tuple, plane_height: 
             return sought_x, sought_y, sought_z
         except ZeroDivisionError:
             return None
+
+
+def find_intersection_segment(triangle_points_coords_list: list, plane_height):
+    start_point = 0
+    end_point = 1
+    intersection_point = []
+
+    triangle_sides = [[tuple(triangle_points_coords_list[i]),
+                       tuple(triangle_points_coords_list[(i + 1) % 3])] for i in range(3)]
+
+    for side in triangle_sides:
+        search_intersection_point = find_intersection_point(side[start_point],
+                                                            side[end_point],
+                                                            plane_height)
+        if search_intersection_point is None:
+            pass
+        else:
+            intersection_point.append(search_intersection_point)
+
+    return tuple(intersection_point)
+
