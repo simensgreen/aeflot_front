@@ -1,8 +1,10 @@
+from functools import lru_cache
+
+import numpy as np
 from PyQt5.QtGui import QVector3D
 from pyqtgraph.dockarea import Dock
-from pyqtgraph.opengl import GLViewWidget
 from pyqtgraph.opengl import GLMeshItem, MeshData, GLAxisItem
-import numpy as np
+from pyqtgraph.opengl import GLViewWidget
 
 from utils import AppData, AppEvent
 
@@ -72,14 +74,11 @@ class AxonometricDock(Dock):
 
     def add_point(self, x, y, z):
         radius = self.app_data.config['axonometric'].getfloat('points radius')
-        if not radius:
-            return
-        mesh_data = MeshData.sphere(rows=5, cols=10, radius=radius)
-        color = tuple(map(float, self.app_data.config['axonometric']['points color'].split()))
-        mesh_data.setFaceColors(np.array(([color] * mesh_data.faceCount())))
-        mesh = GLMeshItem(meshdata=mesh_data, smooth=False)
-        mesh.translate(x, y, z)
-        self.widget.addItem(mesh)
+        if radius:
+            color = tuple(map(float, self.app_data.config['axonometric']['points color'].split()))
+            mesh = get_point_mesh(radius, color)
+            mesh.translate(x, y, z)
+            self.widget.addItem(mesh)
 
     def remove(self):
         self.app_data.handlers.remove(self.handler_id)
@@ -90,3 +89,14 @@ class AxonometricDock(Dock):
         self.widget.setCameraPosition(pos=QVector3D((aabb[3] + aabb[0]) / 2,
                                                     (aabb[4] + aabb[1]) / 2,
                                                     (aabb[5] + aabb[2]) / 2))
+
+
+@lru_cache(maxsize=16)
+def get_point_mesh_data(radius):
+    return MeshData.sphere(rows=5, cols=5, radius=radius)
+
+
+def get_point_mesh(radius, color):
+    mesh_data = get_point_mesh_data(radius)
+    mesh_data.setFaceColors(np.array(([color] * mesh_data.faceCount())))
+    return GLMeshItem(meshdata=mesh_data, smooth=False)
