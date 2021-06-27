@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import open3d
 
-from core.find_coords_point import find_intersections_section
+from core.math_calculation import find_intersections_section, find_intersection_segment
 from scipy.spatial import ConvexHull
 
 
@@ -138,3 +138,10 @@ class Model:
             return min_x, min_y, min_z, max_x, max_y, max_z
         else:
             return 0, 0, 0, 0, 0, 0
+
+    @property
+    def segments(self):
+        for triangle in self.vertexes:
+            tmp = find_intersection_segment(triangle, self.current_plane_value)
+            if tmp:
+                yield tmp
