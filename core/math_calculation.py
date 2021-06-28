@@ -69,3 +69,39 @@ def find_intersection_segment(triangle_points_coords_list: list, plane_height):
 
     return tuple(intersection_point)
 
+
+def points_side_converter(data, geometric_primitive: str):
+    """
+    Данный метод объединяет точки отрезки или разбивает отрезки на точки
+    Args:
+        data: набор данных (точек или отрезков), может быть как списком, так и кортежем
+        geometric_primitive: "points" или "sides" (в зависимости от того, что передаётся в data)
+
+    Returns: либо набор точек, либо набор отрезков
+
+    """
+    output_set = []
+
+    if geometric_primitive == "sides":
+        for side in data:
+            output_set.append(side[0])
+            output_set.append(side[1])
+
+    elif geometric_primitive == "points":
+        if len(data) % 2 == 0:
+            return [(data[point], data[point + 1]) for point in range(0, len(data), 2)]
+        else:
+            data.pop(len(data) - 1)
+            return [(data[point], data[point + 1]) for point in range(0, len(data), 2)]
+
+    else:
+        return TypeError("Неизвестный геометрический примитив!")
+
+    return output_set
+
+
+if __name__ == '__main__':
+    points = [(1, 2), (3, 4), (4, 1), (0, 3), (1, 2)]
+    sides = (((1, 2), (6, 3)), ((5, 9), (0, 4)), ((3, 5), (1, 0)), ((9, 3), (4, 8)), ((2, 4), (1, 1)))
+
+    print(points_side_converter(sides, "sides"))
