@@ -7,6 +7,16 @@ from core.math_calculation import find_intersections_section, find_intersection_
 from scipy.spatial import ConvexHull
 
 
+def split(array, size):
+    output = []
+    while len(array) > size:
+        tmp = array[:size]
+        output.append(tmp)
+        array = array[size:]
+    output.append(array)
+    return output
+
+
 @dataclass(frozen=True)
 class Plane:
     vertices: np.ndarray
@@ -78,7 +88,9 @@ class Model:
     @property
     def vertexes(self):
         shape = self.vertices.shape
-        return self.vertices.reshape((shape[0] // 3, 3, 3))
+        indexes = [i for i in range(shape[0])]
+        # print(self.vertices[split(indexes, 3)])
+        return self.vertices[split(indexes, 3)]
 
     @property
     def sections(self):
