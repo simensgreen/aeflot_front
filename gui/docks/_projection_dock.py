@@ -20,16 +20,20 @@ class ProjectionDock(Dock):
             points = self.app_data.model.convex_hull_plane_projection
         else:
             points = self.app_data.model.current_plane_projection
+        points = list(self.app_data.model.segments)
         self.projection = ProjectionItem(points, app_data)
         self.plot.addItem(self.projection)
 
         self.app_data.handlers.add(self.update, AppEvent.ModelChanged)
 
     def update(self):
-        if self.app_data.config['projections'].getboolean('use convex hull'):
-            self.projection.data = self.app_data.model.convex_hull_plane_projection
-        else:
-            self.projection.data = self.app_data.model.current_plane_projection
+        # if self.app_data.config['projections'].getboolean('use convex hull'):
+        #     self.projection.data = self.app_data.model.convex_hull_plane_projection
+        # else:
+        #     self.projection.data = self.app_data.model.current_plane_projection
+
+        self.projection.data = list(self.app_data.model.segments)
+
         self.plot.replot()
 
     def remove(self):
@@ -50,8 +54,17 @@ class ProjectionItem(GraphicsObject):
         painter = QPainter(self.picture)
 
         path = QPainterPath()
-        path.addPolygon(QPolygonF((QPointF(*point) for point in self.data)))
-        path.setFillRule(Qt.WindingFill)
+        # path.addPolygon(QPolygonF((QPointF(*point) for point in self.data)))
+        # path.setFillRule(Qt.WindingFill)
+
+        old = None
+        for start, end in self.data:
+            if start != old:
+                path.moveTo(start[0], start[1])
+
+            path.lineTo(end[0], end[1])
+            old = end
+
         path.closeSubpath()
 
         fill_color = self.app_data.config['projections']['fill color']
@@ -65,12 +78,16 @@ class ProjectionItem(GraphicsObject):
 
         points_width = self.app_data.config['projections'].getfloat('points size')
         points_color = self.app_data.config['projections']['points color']
+
         if points_width and points_color:
             points_size = QSizeF(points_width, points_width)
             points_brush = mkBrush(points_color)
             points_width /= 2
-            for point in self.data:
-                x, y = point
+            for segment in self.data:
+                start, end = segment
+                x, y = start[0], start[1]
+                painter.fillRect(QRectF(QPointF(x - points_width, y - points_width), points_size), points_brush)
+                x, y = end[0], end[1]
                 painter.fillRect(QRectF(QPointF(x - points_width, y - points_width), points_size), points_brush)
 
     @property
